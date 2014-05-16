@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="10" configfailurepolicy="skip" verbose="0" name="${project.artifactId} suite" 
+       skipfailedinvocationcounts="false" annotations="JDK" parallel="methods">
+    <test verbose="1" name="${project.artifactId} test" junit="false" parallel="true">
+        <classes>
+            <!--
+            <class name="spring.reactor.reactor.SimpleTest"/>  
+            <class name="spring.reactor.reactor.ReplyTest"/>
+            <class name="spring.reactor.reactor.CallbackTest"/> 
+            <class name="spring.reactor.dynamic.DynamicTest"/>
+            <class name="spring.reactor.promise.PromiseTest"/>
+            <class name="spring.reactor.net.NetClientTest"/>
+            <class name="spring.reactor.processor.ProcessorTest"/>
+            <class name="spring.reactor.processor.StrategyTest"/>   
+            <class name="spring.reactor.stream.StreamTest"/>   
+            -->
+            <class name="spring.reactor.reactor.SimpleTest"/> 
+        </classes>
+    </test>
+</suite> 

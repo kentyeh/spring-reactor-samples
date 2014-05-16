@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="${project.artifactId}" verbose="false" monitorInterval="30">
+    <Appenders>
+        <Console name="console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %highlight{%-5level} %class{1.}.%M(%L) - %highlight{%msg}%n%ex{full}%n" />
+        </Console>
+        <RollingRandomAccessFile name="${project.artifactId}-Rolling" fileName="${sys:catalina.home}/logs/${project.artifactId}.log"
+                                         filePattern="${sys:catalina.home}/logs/${project.artifactId}-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d %p [%t] %C{1.}.%M(%L) %m%n%ex{full}%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="spring.reactor" level="DEBUG" additivity="false">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="${project.artifactId}-Rolling" />
+        </Logger>
+        <Logger name="reactor.spring" level="DEBUG" additivity="false">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="${project.artifactId}-Rolling" />
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="${project.artifactId}-Rolling" />
+        </Root>
+    </Loggers>
+</Configuration>
