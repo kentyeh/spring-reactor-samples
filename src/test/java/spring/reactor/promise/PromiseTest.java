@@ -2,8 +2,7 @@ package spring.reactor.promise;
 
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,7 +15,6 @@ import reactor.core.composable.Deferred;
 import reactor.core.composable.Promise;
 import reactor.event.Event;
 import reactor.function.Consumer;
-import spring.reactor.reactor.SimpleTest;
 
 ;
 
@@ -25,13 +23,11 @@ import spring.reactor.reactor.SimpleTest;
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.promise.PromiseContext.class)
+@Log4j2
 public class PromiseTest extends AbstractTestNGSpringContextTests implements InitializingBean {
 
-    private static final Logger logger = LogManager.getLogger(SimpleTest.class);
     private static final int POOL_SIZE = 3;
     private static final int INVO_CNT = 10;
-    @Autowired
-    private AtomicInteger serialno;
     @Autowired
     private PromiseBeanFactory promiseBeanFactory;
     @Autowired
@@ -53,14 +49,14 @@ public class PromiseTest extends AbstractTestNGSpringContextTests implements Ini
 
         @Override
         public void accept(Promise<String> t) {
-            logger.warn("promise complete with {}", t);
+            log.warn("promise complete with {}", t);
         }
     };
     private final Consumer<String> stringConsumer = new Consumer<String>() {
 
         @Override
         public void accept(String s) {
-            logger.warn("promise success with {}", s);
+            log.warn("promise success with {}", s);
         }
 
     };
@@ -68,7 +64,7 @@ public class PromiseTest extends AbstractTestNGSpringContextTests implements Ini
 
         @Override
         public void accept(Throwable ex) {
-            logger.error("promise error:{}", ex.getMessage());
+            log.error("promise error:{}", ex.getMessage());
         }
 
     };
@@ -102,7 +98,7 @@ public class PromiseTest extends AbstractTestNGSpringContextTests implements Ini
     void testPromise1() {
         int serno = counter1.getAndIncrement();
         String msg = String.format("%4d.%s", serno, "Promise1 message");
-        logger.info("ReplyTest send :{}", msg);
+        log.info("ReplyTest send :{}", msg);
         if (serno % 5 == 0) {
             promises1[serno].accept(new RuntimeException(msg));
         } else {
@@ -128,12 +124,12 @@ public class PromiseTest extends AbstractTestNGSpringContextTests implements Ini
                     if (s.equals(String.valueOf(promises3.length / 3)) || s.equals(String.valueOf(promises3.length - promises3.length / 3))) {
                         throw new IllegalArgumentException("Error raising test");
                     }
-                    logger.debug("---> {}", s);
+                    log.debug("---> {}", s);
                 }
             }).onError(new Consumer<Throwable>() {
                 @Override
                 public void accept(Throwable t) {
-                    logger.error(t.getMessage());
+                    log.error(t.getMessage());
                 }
             });
             deferred.accept(String.valueOf(i));
@@ -153,19 +149,19 @@ public class PromiseTest extends AbstractTestNGSpringContextTests implements Ini
                     if (s.equals(String.valueOf(promises4.length / 2))) {
                         throw new IllegalArgumentException("Error raising test");
                     }
-                    logger.debug("---> {}", s);
+                    log.debug("---> {}", s);
                 }
             }).onError(new Consumer<Throwable>() {
                 @Override
                 public void accept(Throwable t) {
-                    logger.error(t.getMessage());
+                    log.error(t.getMessage());
                 }
             });
             reactor.schedule(new Consumer<Integer>() {
 
                 @Override
                 public void accept(Integer i) {
-                    logger.debug("{} -->", i);
+                    log.debug("{} -->", i);
                     deferred.accept(String.valueOf(i));
                 }
 

@@ -1,11 +1,9 @@
 package spring.reactor.processor;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hamcrest.MatcherAssert;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,9 +24,9 @@ import spring.reactor.Pojo;
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.processor.ProcessorContext.class)
+@Log4j2
 public class ProcessorTest extends AbstractTestNGSpringContextTests implements InitializingBean {
 
-    private static final Logger logger = LogManager.getLogger(ProcessorTest.class);
 
     private static final int POOL_SIZE = 3;
     private static final int INVO_CNT = ProcessorContext.BUFF_CNT;
@@ -70,7 +68,7 @@ public class ProcessorTest extends AbstractTestNGSpringContextTests implements I
     public void testSingle1() {
         Operation<Pojo> op = singleProcPojo1.prepare();
         String msg = String.format("%3d.singleProcPojo1's message.", serialno.incrementAndGet());
-        logger.info("send {}", msg);
+        log.info("send {}", msg);
         op.get().setData(msg);
         op.commit();
     }
@@ -82,7 +80,7 @@ public class ProcessorTest extends AbstractTestNGSpringContextTests implements I
             @Override
             public void accept(Pojo pojo) {
                 String msg = String.format("%3d.singleProcPojo2's message.", serialno.incrementAndGet());
-                logger.info("send {}", msg);
+                log.info("send {}", msg);
                 pojo.setData(msg);
             }
         });
@@ -98,12 +96,12 @@ public class ProcessorTest extends AbstractTestNGSpringContextTests implements I
 
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 5000, successPercentage = 100)
     public void testMultiple2NotWork() throws InterruptedException {
-        logger.fatal("It not works!");
+        log.fatal("It not works!");
         multipleProcPojo2.batch(INVO_CNT, new Consumer<Pojo>() {
             @Override
             public void accept(Pojo pojo) {
                 String msg = String.format("%3d.multipleProcPojo2's message.", serialno.incrementAndGet());
-                logger.info("send {}", msg);
+                log.info("send {}", msg);
                 pojo.setData(msg);
             }
         });

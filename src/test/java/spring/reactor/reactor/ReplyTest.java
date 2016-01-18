@@ -2,10 +2,9 @@ package spring.reactor.reactor;
 
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -20,9 +19,9 @@ import reactor.event.Event;
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.reactor.ReactorContext.class)
+@Log4j2
 public class ReplyTest extends AbstractTestNGSpringContextTests {
 
-    private static final Logger logger = LogManager.getLogger(ReplyTest.class);
     private static final int POOL_SIZE = 3;
     private static final int INVO_CNT = 10;
 
@@ -44,21 +43,21 @@ public class ReplyTest extends AbstractTestNGSpringContextTests {
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testStringReplyString() {
         String msg = String.format("%4d.%s", serialno.incrementAndGet(), "Hello World");
-        logger.info("ReplyTest send :{}", msg);
+        log.info("ReplyTest send :{}", msg);
         reactor.notify("string.reply.string", Event.wrap(msg).setReplyTo("simple.string"));
     }
 
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testStringReplyException() {
         String msg = String.format("%4d.%s", serialno.incrementAndGet(), "Hello World");
-        logger.info("ReplyTest send :{}", msg);
+        log.info("ReplyTest send :{}", msg);
         reactor.notify("string.reply.exception", Event.wrap(msg).setReplyTo(Exception.class));
     }
 
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testExceptionReplyException() {
         String msg = String.format("%4d.%s", serialno.incrementAndGet(), "Hello World");
-        logger.info("ReplyTest send :{}", msg);
+        log.info("ReplyTest send :{}", msg);
         reactor.notify("exception.reply.exception", Event.wrap(msg).setReplyTo(RuntimeException.class));
     }
 
@@ -67,14 +66,14 @@ public class ReplyTest extends AbstractTestNGSpringContextTests {
         int sno = serialno.incrementAndGet();
         String uri = String.format("/reply/photo/%d_kent", sno);
         String msg = String.format("%4d.%s", sno, "Hello World");
-        logger.info("ReactorTest send {} with {}", uri, msg);
+        log.info("ReactorTest send {} with {}", uri, msg);
         reactor.notify(uri, Event.wrap(msg).setReplyTo("simple.string"));
     }
 
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testReplyRegex() {
         String phoneno = String.format("09%08d", serialno.incrementAndGet());
-        logger.info("ReplyTest send:{}", phoneno);
+        log.info("ReplyTest send:{}", phoneno);
         reactor.notify("reply_" + phoneno, Event.wrap(phoneno).setReplyTo("simple.string"));
     }
 
@@ -87,7 +86,7 @@ public class ReplyTest extends AbstractTestNGSpringContextTests {
         ja.add(String.format("%4d.%s", sno, "Sylvia"));
         json.put("users", ja);
         json.put("headcount", ja.size());
-        logger.info("ReplyTest send:{}", json);
+        log.info("ReplyTest send:{}", json);
         String msg = String.format("%4d.%s", sno, "Hello World");
         jsonPathReactor.notify(json.toString(), Event.wrap(msg).setKey("simple.string"));
     }

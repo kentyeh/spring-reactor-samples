@@ -1,19 +1,17 @@
 package spring.reactor.dynamic;
 
+import lombok.Getter;
+
 /**
  *
- * @author kent
+ * @author Kent Yeh
  */
 public class Holder<T> {
 
-    private final T data;
+    private final @Getter T data;
 
     public Holder(T data) {
         this.data = data;
-    }
-
-    public T getData() {
-        return data;
     }
 
     @Override

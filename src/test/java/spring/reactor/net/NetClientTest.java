@@ -3,14 +3,10 @@ package spring.reactor.net;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.MulticastSocket;
 import java.nio.channels.DatagramChannel;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -22,16 +18,15 @@ import reactor.io.Buffer;
 import reactor.net.NetChannel;
 import reactor.net.tcp.TcpClient;
 import spring.reactor.Pojo;
-import spring.reactor.reactor.SimpleTest;
 
 /**
  *
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.net.NetContext.class)
+@Log4j2
 public class NetClientTest extends AbstractTestNGSpringContextTests {
 
-    private static final Logger logger = LogManager.getLogger(SimpleTest.class);
     private static final int POOL_SIZE = 3;
     private static final int INVO_CNT = 8;
     @Autowired
@@ -58,7 +53,7 @@ public class NetClientTest extends AbstractTestNGSpringContextTests {
 
                     @Override
                     public void accept(Pojo<String> s) {
-                        logger.debug("Client receive: {}", s);
+                        log.debug("Client receive: {}", s);
                     }
                 });
                 nc.send(new Pojo(String.format("%03d.Hello World", serialno.incrementAndGet())));

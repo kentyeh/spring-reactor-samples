@@ -7,8 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.hamcrest.Matcher;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -35,19 +34,18 @@ import reactor.function.Predicate;
 import reactor.function.support.Boundary;
 import reactor.function.support.Tap;
 import reactor.tuple.Tuple2;
-import spring.reactor.reactor.SimpleTest;
 
 /**
  *
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.stream.StreamContext.class)
+@Log4j2
 public class StreamTest extends AbstractTestNGSpringContextTests implements InitializingBean {
 
-    private static final Logger logger = LogManager.getLogger(SimpleTest.class);
     private static final int POOL_SIZE = 3;
     private static final int INVO_CNT = 10;
-    private Random random = new Random();
+    private final Random random = new Random();
 
     @Autowired
     Environment env;
@@ -64,7 +62,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
 
         @Override
         public void accept(String s) {
-            logger.warn("Stream consume [{}]", s);
+            log.warn("Stream consume [{}]", s);
         }
     };
 
@@ -83,7 +81,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
             @Override
             public boolean test(String s) {
                 if (!random.nextBoolean()) {
-                    logger.error("Unfortunately, [{}] not pass.", s);
+                    log.error("Unfortunately, [{}] not pass.", s);
                     return false;
                 }
                 return true;
@@ -95,7 +93,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
             @Override
             public boolean test(String s) {
                 if (boundary.await(10, TimeUnit.MILLISECONDS)) {
-                    logger.debug("halfNotifyStream with [{}] had run over half.", s);
+                    log.debug("halfNotifyStream with [{}] had run over half.", s);
                 }
                 return true;
             }
@@ -113,14 +111,14 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
     //@Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     public void testSimple() {
         String msg = String.format("%3d.simpleStream say \"Hello\"", serialno.incrementAndGet());
-        logger.debug("testSimple send [{}]", msg);
+        log.debug("testSimple send [{}]", msg);
         simpleStream.accept(msg);
     }
 
     //@Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     public void testUpperStream() {
         String msg = String.format("%3d.testUpperStream say \"Hello\"", serialno.incrementAndGet());
-        logger.debug("testSimple send [{}]", msg);
+        log.debug("testSimple send [{}]", msg);
         upperCaseStream.accept(msg);
     }
 
@@ -128,7 +126,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
     public void testBoundaryStream() {
 
         String msg = String.format("%3d.testBoundaryStream say \"Hello\"", serialno.incrementAndGet());
-        logger.debug("testSimple send [{}]", msg);
+        log.debug("testSimple send [{}]", msg);
 
         halfNotifyStream.accept(msg);
     }
@@ -155,7 +153,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
             @Override
             public void accept(List<Integer> li) {
                 for (Integer i : li) {
-                    logger.warn(" ---> {}  ", i);
+                    log.warn(" ---> {}  ", i);
                 }
             }
 
@@ -167,7 +165,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
                 for (Integer i : t.getT1()) {
                     sum += i;
                 }
-                logger.warn("summary is {}", sum);
+                log.warn("summary is {}", sum);
                 return sum;
             }
         }).flush();
@@ -182,7 +180,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
 
                     @Override
                     public Integer apply(Integer i) {
-                        logger.debug("{} += {}", sum, i);
+                        log.debug("{} += {}", sum, i);
                         sum += i;
                         return sum;
                     }
@@ -223,7 +221,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
         }).reduce(new Function<Tuple2<Integer, Integer>, Integer>() {
             @Override
             public Integer apply(Tuple2<Integer, Integer> r) {
-                logger.debug("{} x {} = {}", r.getT1(), r.getT2(), r.getT1() * r.getT2());
+                log.debug("{} x {} = {}", r.getT1(), r.getT2(), r.getT1() * r.getT2());
                 return r.getT1() * r.getT2();
             }
         }, 1);
@@ -241,7 +239,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
         r.on(key, new Consumer<Event<Integer>>() {
             @Override
             public void accept(Event<Integer> integerEvent) {
-                logger.debug("-------> {}",integerEvent.getData());
+                log.debug("-------> {}",integerEvent.getData());
                 latch.countDown();
             }
         });
@@ -271,7 +269,7 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
         }).when(Exception.class, new Consumer<Exception>() {
             @Override
             public void accept(Exception ex) {
-                logger.error(ex);
+                log.error(ex);
                 latch.countDown();
             }
         }).flush();
@@ -282,10 +280,10 @@ public class StreamTest extends AbstractTestNGSpringContextTests implements Init
             latch.await(1, TimeUnit.SECONDS);
             result = ref.get();
         } catch (InterruptedException ex) {
-            logger.error(ex);
+            log.error(ex);
         }
         long duration = System.currentTimeMillis() - startTime;
-        logger.debug(s.debug());
+        log.debug(s.debug());
         assertThat(result, expected);
         assertThat(duration, is(lessThan(2000L)));
     }

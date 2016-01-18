@@ -1,12 +1,10 @@
 package spring.reactor.processor;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import reactor.core.Environment;
@@ -21,9 +19,8 @@ import spring.reactor.Pojo;
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.processor.ProcessorContext.class)
+@Log4j2
 public class StrategyTest extends AbstractTestNGSpringContextTests {
-
-    private static final Logger logger = LogManager.getLogger(StrategyTest.class);
 
     private static final int RUNS = 250000000;
     private static final int BATCH_SIZE = 512;
@@ -87,7 +84,7 @@ public class StrategyTest extends AbstractTestNGSpringContextTests {
         long end = System.currentTimeMillis();
         long elapsed = (end - start);
         long throughput = Math.round(RUNS / ((double) elapsed / 1000));
-        logger.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
+        log.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
     }
 
     @Test
@@ -110,7 +107,7 @@ public class StrategyTest extends AbstractTestNGSpringContextTests {
         long end = System.currentTimeMillis();
         long elapsed = (end - start);
         long throughput = Math.round(RUNS / ((double) elapsed / 1000));
-        logger.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
+        log.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
     }
 
     @Test
@@ -133,7 +130,7 @@ public class StrategyTest extends AbstractTestNGSpringContextTests {
         long end = System.currentTimeMillis();
         long elapsed = (end - start);
         long throughput = Math.round(RUNS / ((double) elapsed / 1000));
-        logger.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
+        log.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
     }
 
     @Test
@@ -156,7 +153,7 @@ public class StrategyTest extends AbstractTestNGSpringContextTests {
         long end = System.currentTimeMillis();
         long elapsed = (end - start);
         long throughput = Math.round(RUNS / ((double) elapsed / 1000));
-        logger.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
+        log.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
     }
 
     @Test
@@ -179,7 +176,7 @@ public class StrategyTest extends AbstractTestNGSpringContextTests {
         long end = System.currentTimeMillis();
         long elapsed = (end - start);
         long throughput = Math.round(RUNS / ((double) elapsed / 1000));
-        logger.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
+        log.debug("{}  > elapsed: {}ms, throughput: {}/sec", waitStrategy, elapsed, throughput);
     }
 
 }

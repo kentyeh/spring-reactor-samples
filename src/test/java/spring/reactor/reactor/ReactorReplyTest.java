@@ -1,8 +1,7 @@
 package spring.reactor.reactor;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -17,15 +16,14 @@ import reactor.event.Event;
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.reactor.ReactorContext.class)
+@Log4j2
 public class ReactorReplyTest extends AbstractTestNGSpringContextTests {
-
-    private static final Logger logger = LogManager.getLogger(SimpleTest.class);
 
     @Autowired
     Reactor reactor;
     @Autowired
     Reactor jsonPathReactor;
-    private AtomicInteger cnt = new AtomicInteger(100);
+    private final AtomicInteger cnt = new AtomicInteger(100);
 
     @BeforeClass
     public void setup() {
@@ -37,7 +35,7 @@ public class ReactorReplyTest extends AbstractTestNGSpringContextTests {
     @Test
     void testString() {
         String msg = String.format("%3d.%s", cnt.incrementAndGet(), "Hello World");
-        logger.info("ReactorTest send:{}", msg);
+        log.info("ReactorTest send:{}", msg);
         reactor.notify("simple.string", Event.wrap(msg).setReplyTo("simple.string"));
     }
 }

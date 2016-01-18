@@ -2,10 +2,9 @@ package spring.reactor.reactor;
 
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -20,9 +19,9 @@ import reactor.event.Event;
  * @author Kent Yeh
  */
 @ContextConfiguration(classes = spring.reactor.reactor.ReactorContext.class)
+@Log4j2
 public class SimpleTest extends AbstractTestNGSpringContextTests {
 
-    private static final Logger logger = LogManager.getLogger(SimpleTest.class);
     private static final int POOL_SIZE = 3;
     private static final int INVO_CNT = 10;
 
@@ -44,14 +43,14 @@ public class SimpleTest extends AbstractTestNGSpringContextTests {
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testString() {
         String msg = String.format("%4d.%s", serialno.incrementAndGet(), "Hello World");
-        logger.info("ReactorTest send:{}", msg);
+        log.info("ReactorTest send:{}", msg);
         reactor.notify("simple.string", Event.wrap(msg));
     }
 
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testException() {
         String msg = String.format("%4d.%s", serialno.incrementAndGet(), "Reactor Exception event");
-        logger.info("ReactorTest send:{}", msg);
+        log.info("ReactorTest send:{}", msg);
         reactor.notify(RuntimeException.class, Event.wrap(new RuntimeException(msg)));
     }
 
@@ -61,14 +60,14 @@ public class SimpleTest extends AbstractTestNGSpringContextTests {
         //String uri = "/photo/kent.png"; ----Not work
         String uri = String.format("/photo/%d_kent", sno);
         String msg = String.format("%4d.%s", sno, "Hello World");
-        logger.info("ReactorTest send {} with {}", uri, msg);
+        log.info("ReactorTest send {} with {}", uri, msg);
         reactor.notify(uri, Event.wrap(msg));
     }
 
     @Test(threadPoolSize = POOL_SIZE, invocationCount = INVO_CNT, timeOut = 10000)
     void testRegex() {
         String phoneno = String.format("09%08d", serialno.incrementAndGet());
-        logger.info("ReactorTest send:{}", phoneno);
+        log.info("ReactorTest send:{}", phoneno);
         reactor.notify(phoneno, Event.wrap(phoneno));
     }
 
@@ -81,7 +80,7 @@ public class SimpleTest extends AbstractTestNGSpringContextTests {
         ja.add(String.format("%4d.%s", sno, "Sylvia"));
         json.put("users", ja);
         json.put("total", ja.size());
-        logger.info("ReactorTest send:{}", json);
+        log.info("ReactorTest send:{}", json);
         String msg = String.format("%4d.%s", sno, "Hello World");
         jsonPathReactor.notify(json.toString(), Event.wrap(msg).setKey("json-path"));
     }

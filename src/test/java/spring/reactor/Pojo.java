@@ -1,28 +1,24 @@
 package spring.reactor;
 
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author Kent Yeh
+ * @param <T>
  */
-public class Pojo<T extends Serializable> implements Serializable{
+@NoArgsConstructor
+public class Pojo<T extends Serializable> implements Serializable {
+
     private static final long serialVersionUID = 4529567644332658079L;
 
+    @Getter @Setter
     private T data;
 
-    public Pojo() {
-    }
-
     public Pojo(T data) {
-        this.data = data;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
         this.data = data;
     }
 

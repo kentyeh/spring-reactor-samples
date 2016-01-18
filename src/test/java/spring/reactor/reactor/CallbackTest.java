@@ -1,8 +1,7 @@
 package spring.reactor.reactor;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -18,9 +17,8 @@ import reactor.function.Consumer;
  * @author kent
  */
 @ContextConfiguration(classes = spring.reactor.reactor.ReactorContext.class)
+@Log4j2
 public class CallbackTest extends AbstractTestNGSpringContextTests {
-
-    private static final Logger logger = LogManager.getLogger(SimpleTest.class);
 
     @Autowired
     Reactor reactor;
@@ -40,12 +38,12 @@ public class CallbackTest extends AbstractTestNGSpringContextTests {
     @Test
     void testRegex() {
         String phoneno = String.format("09%08d", serialno.incrementAndGet());
-        logger.info("CallbackTest send:{}", phoneno);
+        log.info("CallbackTest send:{}", phoneno);
         CallbackEvent cbEvt = new CallbackEvent(new PhoneObject(phoneno), new Consumer<PhoneObject>() {
 
             @Override
             public void accept(PhoneObject originalData) {
-                logger.warn("CallbackTest callback with original data :{}", originalData.phoneno);
+                log.warn("CallbackTest callback with original data :{}", originalData.phoneno);
             }
         });
         reactor.notify("callback_" + phoneno, cbEvt);
